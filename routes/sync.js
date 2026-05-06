@@ -73,37 +73,44 @@ for (const m of movements || []) {
 })
 
 
-/* ===============================
-   2. PULL (SERVER → HP)
-   ===============================*/
 router.get('/pull', async (req, res) => {
 
   const lastSync =
-    req.query.lastSync || '2000-01-01 00:00:00'
+    req.query.lastSync || '1970-01-01 00:00:00'
 
   try {
+
     const [products] = await db.query(
-      `SELECT * FROM products 
-       WHERE updated_at >= DATE_SUB(?, INTERVAL 5 SECOND)`,
+      `SELECT * FROM products
+       WHERE updated_at >= ?`,
       [lastSync]
     )
 
     const [movements] = await db.query(
-      `SELECT * FROM stock_movements 
-       WHERE created_at >= DATE_SUB(?, INTERVAL 5 SECOND)`,
+      `SELECT * FROM stock_movements
+       WHERE created_at >= ?`,
       [lastSync]
     )
 
     const [sales] = await db.query(
-      `SELECT * FROM sales 
-       WHERE created_at >= DATE_SUB(?, INTERVAL 5 SECOND)`,
+      `SELECT * FROM sales
+       WHERE created_at >= ?`,
       [lastSync]
     )
 
-    res.json({ products, movements, sales })
+    res.json({
+      products,
+      movements,
+      sales
+    })
+
   } catch (err) {
-    console.error(err)
-    res.status(500).json({ error: err.message })
+
+    console.error('PULL ERROR:', err)
+
+    res.status(500).json({
+      error: err.message
+    })
   }
 })
 
