@@ -77,7 +77,9 @@ for (const m of movements || []) {
    2. PULL (SERVER → HP)
    ===============================*/
 router.get('/pull', async (req, res) => {
-  const { lastSync } = req.query
+
+  const lastSync =
+    req.query.lastSync || '2000-01-01 00:00:00'
 
   try {
     const [products] = await db.query(
