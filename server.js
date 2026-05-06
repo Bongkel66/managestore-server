@@ -9,6 +9,9 @@ app.use(express.json())
 
 app.use('/api/sync', syncRoutes)
 
-app.listen(5000, '0.0.0.0', () => {
-  console.log('Server running on http://192.168.1.5:5000')
+// 🔥 pakai port dari Railway
+const PORT = process.env.PORT || 5000
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`)
 })
